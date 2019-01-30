@@ -1,0 +1,2 @@
+tree.o: tree.c tree.h
+llrbtree.o: llrbtree.c tree.h
