@@ -886,12 +886,21 @@ EOS
   def test_insert_and_delete
     tree = LLRBTree.new
     max_num = 100_000
-    rand_nums = (1..max_num).to_a.shuffle
+    rand_nums = Hash[*(1..max_num).to_a.shuffle]
+    rand_nums.each { |k, v| tree[k] = v }
+    assert_equal(rand_nums.keys.size, tree.size)
 
-    max_num.times { |i| tree[rand_nums[i]] = i }
-    assert_equal(max_num, tree.size)
+    rand_nums.values.each do |v|
+      assert_equal(nil, tree.delete(v))
+    end
 
-    rand_nums.each { |n| tree.delete(n) }
+    assert_equal(rand_nums.keys.size, tree.size)
+    assert_equal(rand_nums.keys.size, tree.count)
+
+    rand_nums.each do |k, v|
+      assert_equal(v, tree.delete(k))
+    end
     assert_equal(0, tree.size)
+    assert_equal(0, tree.count)
   end
 end
