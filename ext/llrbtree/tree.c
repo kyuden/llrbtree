@@ -348,16 +348,16 @@ recursive_delete(tree_t *tree, node_t *node, const void *key)
             node = rotate_right(node);
         }
 
+        if (tree->compare(key, node->key, tree->context) == 0 && node->right == NULL) {
+            tree->free_node(node, tree->context);
+            return NULL;
+        }
+
         if (is_black(node->right) && (node->right->left == NULL || is_black(node->right->left))) {
             node = move_red_right(node);
         }
 
         if (tree->compare(key, node->key, tree->context) == 0) {
-            if (node->right == NULL) {
-                tree->free_node(node, tree->context);
-                return NULL;
-            }
-
             min_node = min(node->right);
             node->key = min_node->key;
             node->data = min_node->data;
