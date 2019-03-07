@@ -332,7 +332,7 @@ tree_insert(tree_t *tree, node_t *node, const void *key)
 }
 
 static node_t*
-recursive_delete(tree_t *tree, node_t *node, const void *key)
+recursive_delete(tree_t *tree, node_t *node, const void *key, void *deleted_data)
 {
     node_t *min_node;
 
@@ -342,13 +342,14 @@ recursive_delete(tree_t *tree, node_t *node, const void *key)
         if (is_black(node->left) && (node->left->left == NULL || is_black(node->left->left))) {
             node = move_red_left(node);
         }
-        node->left = recursive_delete(tree, node->left, key);
+        node->left = recursive_delete(tree, node->left, key, deleted_data);
     } else {
         if (is_red(node->left)) {
             node = rotate_right(node);
         }
 
         if (tree->compare(key, node->key, tree->context) == 0 && node->right == NULL) {
+            *(void **)deleted_data = node->data;
             tree->free_node(node, tree->context);
             return NULL;
         }
@@ -358,26 +359,32 @@ recursive_delete(tree_t *tree, node_t *node, const void *key)
         }
 
         if (tree->compare(key, node->key, tree->context) == 0) {
+
             min_node = min(node->right);
             node->key = min_node->key;
+            *(void **)deleted_data = node->data;
             node->data = min_node->data;
             node->right = delete_min(tree, node->right);
         } else {
-            node->right = recursive_delete(tree, node->right, key);
+            node->right = recursive_delete(tree, node->right, key, deleted_data);
         }
     }
 
     return fix_up(node);
 }
 
-void
+void*
 tree_delete(tree_t *tree, const void *key)
 {
-  tree->root_node = recursive_delete(tree, tree->root_node, key);
+  void* deleted_data = NULL;
+  tree->root_node = recursive_delete(tree, tree->root_node, key, &deleted_data);
   if (tree->root_node != NULL) {
     tree->root_node->color = node_black;
   }
-  tree->node_count--;
+  if (deleted_data != NULL) {
+    tree->node_count--;
+  }
+  return deleted_data;
 }
 
 node_t*

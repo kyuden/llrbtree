@@ -47,7 +47,7 @@ extern node_t *tree_lookup(tree_t *, const void *);
 extern node_t *tree_lower_bound(tree_t *, const void *);
 extern node_t *tree_upper_bound(tree_t *, const void *);
 extern int tree_insert(tree_t *, node_t *, const void *);
-extern void tree_delete(tree_t *, const void *);
+extern void *tree_delete(tree_t *, const void *);
 extern node_t *tree_first(tree_t *);
 extern node_t *tree_last(tree_t *);
 extern node_t *tree_next(tree_t *, node_t *);

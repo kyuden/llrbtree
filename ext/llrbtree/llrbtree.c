@@ -837,16 +837,14 @@ VALUE
 llrbtree_delete(VALUE self, VALUE key)
 {
     tree_t* tree = TREE(self);
-    node_t* node;
-    VALUE value;
+    void* deleted_data = NULL;
 
     llrbtree_modify(self);
-    node = tree_lookup(tree, TO_KEY(key));
-    if (node == NULL)
+    deleted_data = tree_delete(tree, TO_KEY(key));
+    if (deleted_data == NULL)
         return rb_block_given_p() ? rb_yield(key) : Qnil;
-    value = GET_VAL(node);
-    tree_delete(tree, TO_KEY(key));
-    return value;
+
+    return (VALUE)deleted_data;
 }
 
 /*********************************************************************/
