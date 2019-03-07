@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
   spec.name          = 'llrbtree'
-  spec.version       = '0.0.2'
+  spec.version       = '0.0.3'
   spec.authors       = ['kyuden']
   spec.email         = ['msmsms.um@gmail.com']
 
